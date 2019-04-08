@@ -3,8 +3,7 @@ import csv
 import sys
 import numpy as np
 from sklearn import svm
-
-from sklearn.svm import LinearSVC
+from sklearn.svm import SVC
 from sklearn.model_selection import StratifiedShuffleSplit, GridSearchCV
 from sklearn.metrics import classification_report
 from sklearn.metrics import accuracy_score
@@ -40,8 +39,8 @@ def algoritms_classifications(typeAlgorithm, X, y, output_f):
         
     elif(typeAlgorithm ==3):
         name = 'svm_rbf'
-        parameters = {'C': [0,1, 0,5, 1, 5, 10, 50, 100] , 'gamma':[0,1, 0,5, 1, 3, 6, 10]}
-        estimator  = svm.SVC(kernel='rbf')
+        parameters = {'C':[0.1, 0.5, 1, 5, 10, 50, 100], 'gamma': [0.1, 0.5, 1, 3, 6, 10]}
+        estimator = SVC()
         
     elif(typeAlgorithm ==4):
         name = 'logistic'
@@ -55,17 +54,17 @@ def algoritms_classifications(typeAlgorithm, X, y, output_f):
         
     elif(typeAlgorithm == 6):
         name = 'decision_tree'
-        parameters = { 'max_depth': range(0,50), 'min_samples_split' : range(2, 10, 1)}
+        parameters = { 'max_depth': range(1,50), 'min_samples_split' : range(2, 10, 1)}
         estimador = DecisionTreeClassifier()
         
     elif(typeAlgorithm == 7):
         name = 'random_forest'
-        parameters = { 'max_depth': range(0,50),'min_samples_split': range(1,50)}
-        estimador = RandomForestClassifier()
+        parameters = { 'max_depth': range(1,50),'min_samples_split': range(2, 10, 1)}
+        estimador = RandomForestClassifier(random_state=0)
     
-    
-    
+    print('before',name)
     clf = GridSearchCV(estimator, parameters, cv=5, n_jobs=10)
+    print('post',name)
     clf.fit(X_train, y_train)
     
     #best_estimator = clf.best_estimator_
@@ -85,7 +84,7 @@ def algoritms_classifications(typeAlgorithm, X, y, output_f):
     #print(classification_report(y_true, y_pred))
     #x_predict = clf.predict(X_train)
     #y_predict = clf.predict(y_train)
-    with open(output_f, 'w') as csvfile:
+    with open(output_f, 'w', newline='') as csvfile:
         fieldnames = ['name', 'best_score', 'test_score']
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
         writer.writerow({'name': name, 'best_score':best_score, 'test_score': test_score})
@@ -115,9 +114,11 @@ if __name__ == "__main__":
     X = points[:,:-1]
     y = points[:,-1]
     
-    
-    algoritms_classifications(2, X, y, output_f=output_f)
-    i= 0
+    algoritms_classifications(3, X, y, output_f=output_f)
+    '''
+    for i in range(1,n_algorithms-1):
+        algoritms_classifications(i, X, y, output_f=output_f)
+    '''
     #for i in range(0,n_algorithms):
         #algoritms_classifications(i, X_train, y_train)
 
