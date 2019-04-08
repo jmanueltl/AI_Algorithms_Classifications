@@ -3,7 +3,7 @@ import csv
 import sys
 import numpy as np
 from sklearn import svm
-from sklearn.svm import SVC
+from sklearn.svm import SVC, LinearSVC
 from sklearn.model_selection import StratifiedShuffleSplit, GridSearchCV
 from sklearn.metrics import classification_report
 from sklearn.metrics import accuracy_score
@@ -30,12 +30,12 @@ def algoritms_classifications(typeAlgorithm, X, y, output_f):
     if (typeAlgorithm == 1):
         name = 'svm_linear'
         parameters = {'C':[0.1, 0.5, 1, 5, 10, 50, 100]}
-        estimator  = svm.SVC(kernel='linear')
+        estimator  = SVC(kernel='linear')
 
     elif(typeAlgorithm ==2):
         name = 'svm_polynomial'
         parameters = {'C':[0.1, 1, 3], 'degree':[4, 5, 6], 'gamma':[0.1, 0.5]}
-        estimator  = svm.SVC(kernel='poly')
+        estimator  = SVC(kernel='poly')
         
     elif(typeAlgorithm ==3):
         name = 'svm_rbf'
@@ -44,8 +44,8 @@ def algoritms_classifications(typeAlgorithm, X, y, output_f):
         
     elif(typeAlgorithm ==4):
         name = 'logistic'
-        parameters = {'C' : [0,1, 0,5, 1, 5, 10, 50, 100]}
-        estimator = LogisticRegression()
+        parameters = {'C' : [0.1, 0.5, 1, 5, 10, 50, 100]}
+        estimator = LogisticRegression(solver='lbfgs')
         
     elif(typeAlgorithm ==5):
         name = 'knn'
@@ -114,7 +114,7 @@ if __name__ == "__main__":
     X = points[:,:-1]
     y = points[:,-1]
     
-    algoritms_classifications(3, X, y, output_f=output_f)
+    algoritms_classifications(5, X, y, output_f=output_f)
     '''
     for i in range(1,n_algorithms-1):
         algoritms_classifications(i, X, y, output_f=output_f)
