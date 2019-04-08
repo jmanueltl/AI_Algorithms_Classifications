@@ -11,6 +11,7 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier
+from sklearn import tree
 # coding=utf-8
 
 from sklearn.metrics import confusion_matrix
@@ -32,39 +33,39 @@ def algoritms_classifications(typeAlgorithm, X, y, output_f):
         parameters = {'C':[0.1, 0.5, 1, 5, 10, 50, 100]}
         estimator  = SVC(kernel='linear')
 
-    elif(typeAlgorithm ==2):
+    elif(typeAlgorithm == 2):
         name = 'svm_polynomial'
         parameters = {'C':[0.1, 1, 3], 'degree':[4, 5, 6], 'gamma':[0.1, 0.5]}
         estimator  = SVC(kernel='poly')
         
-    elif(typeAlgorithm ==3):
+    elif(typeAlgorithm == 3):
         name = 'svm_rbf'
         parameters = {'C':[0.1, 0.5, 1, 5, 10, 50, 100], 'gamma': [0.1, 0.5, 1, 3, 6, 10]}
         estimator = SVC()
         
-    elif(typeAlgorithm ==4):
+    elif(typeAlgorithm == 4):
         name = 'logistic'
         parameters = {'C' : [0.1, 0.5, 1, 5, 10, 50, 100]}
         estimator = LogisticRegression(solver='lbfgs')
         
-    elif(typeAlgorithm ==5):
+    elif(typeAlgorithm == 5):
         name = 'knn'
         parameters = {'n_neighbors': range(1,50), 'leaf_size': range(5, 61, 5)}
-        estimator = KNeighborsClassifier()
+        estimator = KNeighborsClassifier(n_neighbors=3)
         
     elif(typeAlgorithm == 6):
         name = 'decision_tree'
-        parameters = { 'max_depth': range(1,50), 'min_samples_split' : range(2, 10, 1)}
-        estimador = DecisionTreeClassifier()
+        parameters = { 'max_depth': range(1,51), 'min_samples_split' : range(2, 10, 1)}
+        estimator = DecisionTreeClassifier()
         
     elif(typeAlgorithm == 7):
         name = 'random_forest'
-        parameters = { 'max_depth': range(1,50),'min_samples_split': range(2, 10, 1)}
-        estimador = RandomForestClassifier(random_state=0)
+        parameters = { 'max_depth': range(1,51),'min_samples_split': range(2, 10, 1)}
+        estimator = RandomForestClassifier(n_estimators=10)
     
-    print('before',name)
+    #print('before',name)
     clf = GridSearchCV(estimator, parameters, cv=5, n_jobs=10)
-    print('post',name)
+    #print('post',name)
     clf.fit(X_train, y_train)
     
     #best_estimator = clf.best_estimator_
@@ -77,17 +78,18 @@ def algoritms_classifications(typeAlgorithm, X, y, output_f):
     #print(clf.best_score_)
     test_score = accuracy_score(Y_test_pred, y_test)
     best_score = accuracy_score(Y_train_pred, y_train)
-    print(test_score)
-    print(best_score)
+    #print(test_score)
+    #print(best_score)
     #cm = confusion_matrix(y_test, y_pred)
     
     #print(classification_report(y_true, y_pred))
     #x_predict = clf.predict(X_train)
     #y_predict = clf.predict(y_train)
-    with open(output_f, 'w', newline='') as csvfile:
-        fieldnames = ['name', 'best_score', 'test_score']
-        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
-        writer.writerow({'name': name, 'best_score':best_score, 'test_score': test_score})
+    with open(output_f, 'a',newline='') as csvfile:
+        #fieldnames = ['name', 'best_score', 'test_score']
+        #writer = csv.DictWriter(csvfile, delimiter=',', fieldnames=fieldnames, quotechar='|', quoting=csv.QUOTE_MINIMAL, lineterminator='\n')
+        writer = csv.writer(csvfile, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL, lineterminator='\n')
+        writer.writerow([name, best_score, test_score])
     
 def stratified_sampling(X, y):
     stratified_data = StratifiedShuffleSplit(n_splits = 1, test_size = 0.4, train_size = 0.6, random_state = 0)
@@ -114,16 +116,13 @@ if __name__ == "__main__":
     X = points[:,:-1]
     y = points[:,-1]
     
-    algoritms_classifications(5, X, y, output_f=output_f)
-    '''
-    for i in range(1,n_algorithms-1):
+    #algoritms_classifications(7, X, y, output_f=output_f) #test
+    
+    for i in range(1,n_algorithms+1):
         algoritms_classifications(i, X, y, output_f=output_f)
-    '''
-    #for i in range(0,n_algorithms):
-        #algoritms_classifications(i, X_train, y_train)
+    
 
-    #print(clf.predict([0.58,0.76]))
-    #training data_set
+
 
     
     
